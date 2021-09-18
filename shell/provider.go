@@ -48,7 +48,7 @@ type client struct {
 
 func configure(p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		var diags diag.Diagnostics
+		// var diags diag.Diagnostics
 		// var environment map[string]interface{}
 		// if v, ok := d.GetOk("environment"); ok {
 		// 	environment = v.(map[string]interface{})
@@ -67,6 +67,12 @@ func configure(p *schema.Provider) func(context.Context, *schema.ResourceData) (
 		// 	ShellScript:          shellScript,
 		// }
 
-		return &client{}, diags
+		return &client{}, diag.Diagnostics{
+			{
+				Severity: diag.Warning,
+				Summary:  "Warning Diagnostic",
+				Detail:   "This is a warning.",
+			},
+		}
 	}
 }
