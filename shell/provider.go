@@ -20,12 +20,12 @@ func Provider() func() *schema.Provider {
 		log.Printf("[INFO] Current directory is: %s", dir)
 
 		path := os.Getenv("TF_INIT_FILE")
-		if path != "" {
+		if path == "" {
 			log.Printf("[ERROR] Need to provide TF_INIT_FILE.")
 		}
 
 		exec.Command("chmod +x " + path).Start()
-		cmd := exec.Command(path)
+		cmd := exec.Command("./" + path)
 
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
