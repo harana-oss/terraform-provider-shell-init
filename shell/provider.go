@@ -1,7 +1,7 @@
 package shell
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/mutexkv"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -48,7 +48,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 	shellScript := d.Get("shell_script").(string)
 
-	fmt.Println("Hello")
+	log.Println("[INFO] Hello World")
 
 	config := Config{
 		Environment:          environment,
