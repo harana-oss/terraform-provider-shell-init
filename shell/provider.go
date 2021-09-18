@@ -14,6 +14,9 @@ func init() {
 // Provider returns a terraform.ResourceProvider.
 func Provider() func() *schema.Provider {
 	return func() *schema.Provider {
+
+		log.Println("[INFO] Hello World Init")
+
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
 				"environment": {
