@@ -1,83 +1,70 @@
 package shell
 
 import (
-	"context"
+	"bytes"
+	"fmt"
 	"log"
+	"os"
+	"os/exec"
+	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func init() {
-
-	log.Println("[INFO] Hello World Init")
-}
-
-// Provider returns a terraform.ResourceProvider.
 func Provider() func() *schema.Provider {
 	return func() *schema.Provider {
 
-		log.Println("[INFO] Hello World Provider")
-
-		p := &schema.Provider{
-			Schema: map[string]*schema.Schema{
-				"environment": {
-					Type:     schema.TypeMap,
-					Optional: true,
-					Elem:     schema.TypeString,
-				},
-				"sensitive_environment": {
-					Type:      schema.TypeMap,
-					Optional:  true,
-					Sensitive: true,
-					Elem:      schema.TypeString,
-				},
-				"shell_script": {
-					Type:     schema.TypeString,
-					Required: true,
-				},
-			},
-
-			DataSourcesMap: map[string]*schema.Resource{},
-			ResourcesMap:   map[string]*schema.Resource{},
+		dir, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(dir)
+	
+		path := os.Getenv("TF_INIT_PATH")
+		if path != "" {
+			log.Fatal("Need to provide TF_INIT_PATH")
 		}
 
-		p.ConfigureContextFunc = configure(p)
+		cmd := exec.Command(path)
 
-		return p
-	}
-}
+		stdout, err := cmd.StdoutPipe()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-type client struct {
-}
+		stderr, err := cmd.StderrPipe()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-func configure(p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		// var diags diag.Diagnostics
-		// var environment map[string]interface{}
-		// if v, ok := d.GetOk("environment"); ok {
-		// 	environment = v.(map[string]interface{})
-		// }
-		// var sensitiveEnvironment map[string]interface{}
-		// if v, ok := d.GetOk("sensitive_environment"); ok {
-		// 	sensitiveEnvironment = v.(map[string]interface{})
-		// }
-		// shellScript := d.Get("shell_script").(string)
+		if err := cmd.Start(); err != nil {
+			log.Fatal(err)
+		}
 
-		log.Println("[INFO] Hello World")
+		bb := bytes.NewBuffer([]byte{})
+		bb.ReadFrom(stdout)
+		for {
+			s, err := bb.ReadString('\n')
+			if err != nil {
+				break
+			}
+			fmt.Printf("%v\n", strings.Fields(s))
+		}
 
-		// config := Config{
-		// 	Environment:          environment,
-		// 	SensitiveEnvironment: sensitiveEnvironment,
-		// 	ShellScript:          shellScript,
-		// }
+		be := bytes.NewBuffer([]byte{})
+		be.ReadFrom(stderr)
+		for {
+			s, err := be.ReadString('\n')
+			if err != nil {
+				break
+			}
+			fmt.Printf("%v\n", strings.Fields(s))
+		}
 
-		return &client{}, diag.Diagnostics{
-			{
-				Severity: diag.Warning,
-				Summary:  "Warning Diagnostic",
-				Detail:   "This is a warning.",
-			},
+		return &schema.Provider{
+			Schema:         map[string]*schema.Schema{},
+			DataSourcesMap: map[string]*schema.Resource{},
+			ResourcesMap:   map[string]*schema.Resource{},
 		}
 	}
 }
