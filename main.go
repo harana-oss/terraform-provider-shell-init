@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Placidina/terraform-provider-shell/shell"
+	"github.com/harana-oss/terraform-provider-shell-init/shell"
 	"github.com/hashicorp/terraform-plugin-sdk/plugin"
 )
 
