@@ -1,6 +1,6 @@
 module github.com/harana-oss/terraform-provider-shell-init
 
-go 1.16
+go 1.15
 
 require (
 	github.com/hashicorp/terraform-plugin-sdk v1.16.1
