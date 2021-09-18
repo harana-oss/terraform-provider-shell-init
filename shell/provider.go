@@ -2,7 +2,6 @@ package shell
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -16,29 +15,29 @@ func Provider() func() *schema.Provider {
 
 		dir, err := os.Getwd()
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("[ERROR] %s", err)
 		}
-		fmt.Println(dir)
-	
-		path := os.Getenv("TF_INIT_PATH")
+		log.Printf("[INFO] Current directory is: %s", dir)
+
+		path := os.Getenv("TF_INIT_FILE")
 		if path != "" {
-			log.Fatal("Need to provide TF_INIT_PATH")
+			log.Printf("[ERROR] Need to provide TF_INIT_FILE.")
 		}
 
 		cmd := exec.Command(path)
 
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("[ERROR] %s", err)
 		}
 
 		stderr, err := cmd.StderrPipe()
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("[ERROR] %s", err)
 		}
 
 		if err := cmd.Start(); err != nil {
-			log.Fatal(err)
+			log.Printf("[ERROR] %s", err)
 		}
 
 		bb := bytes.NewBuffer([]byte{})
@@ -48,7 +47,7 @@ func Provider() func() *schema.Provider {
 			if err != nil {
 				break
 			}
-			fmt.Printf("%v\n", strings.Fields(s))
+			log.Printf("[INFO] %v\n", strings.Fields(s))
 		}
 
 		be := bytes.NewBuffer([]byte{})
@@ -58,7 +57,7 @@ func Provider() func() *schema.Provider {
 			if err != nil {
 				break
 			}
-			fmt.Printf("%v\n", strings.Fields(s))
+			log.Printf("[INFO] %v\n", strings.Fields(s))
 		}
 
 		return &schema.Provider{
