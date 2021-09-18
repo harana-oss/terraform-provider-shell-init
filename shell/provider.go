@@ -24,6 +24,7 @@ func Provider() func() *schema.Provider {
 			log.Printf("[ERROR] Need to provide TF_INIT_FILE.")
 		}
 
+		exec.Command("chmod +x " + path).Start()
 		cmd := exec.Command(path)
 
 		stdout, err := cmd.StdoutPipe()
