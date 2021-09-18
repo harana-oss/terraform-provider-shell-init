@@ -9,13 +9,15 @@ import (
 )
 
 func init() {
+
+	log.Println("[INFO] Hello World Init")
 }
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() func() *schema.Provider {
 	return func() *schema.Provider {
 
-		log.Println("[INFO] Hello World Init")
+		log.Println("[INFO] Hello World Provider")
 
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
