@@ -1,64 +1,72 @@
 package shell
 
 import (
+	"context"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/mutexkv"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+func init() {
+}
+
 // Provider returns a terraform.ResourceProvider.
-func Provider() terraform.ResourceProvider {
+func Provider() func() *schema.Provider {
+	return func() *schema.Provider {
+		p := &schema.Provider{
+			Schema: map[string]*schema.Schema{
+				"environment": {
+					Type:     schema.TypeMap,
+					Optional: true,
+					Elem:     schema.TypeString,
+				},
+				"sensitive_environment": {
+					Type:      schema.TypeMap,
+					Optional:  true,
+					Sensitive: true,
+					Elem:      schema.TypeString,
+				},
+				"shell_script": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			},
 
-	// The actual provider
-	return &schema.Provider{
-		Schema: map[string]*schema.Schema{
-			"environment": {
-				Type:     schema.TypeMap,
-				Optional: true,
-				Elem:     schema.TypeString,
-			},
-			"sensitive_environment": {
-				Type:      schema.TypeMap,
-				Optional:  true,
-				Sensitive: true,
-				Elem:      schema.TypeString,
-			},
-			"shell_script": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-		},
+			DataSourcesMap: map[string]*schema.Resource{},
+			ResourcesMap:   map[string]*schema.Resource{},
+		}
 
-		DataSourcesMap: map[string]*schema.Resource{},
-		ResourcesMap:   map[string]*schema.Resource{},
-		ConfigureFunc:  providerConfigure,
+		p.ConfigureContextFunc = configure(p)
+
+		return p
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	var environment map[string]interface{}
-	if v, ok := d.GetOk("environment"); ok {
-		environment = v.(map[string]interface{})
-	}
-	var sensitiveEnvironment map[string]interface{}
-	if v, ok := d.GetOk("sensitive_environment"); ok {
-		sensitiveEnvironment = v.(map[string]interface{})
-	}
-	shellScript := d.Get("shell_script").(string)
-
-	log.Println("[INFO] Hello World")
-
-	config := Config{
-		Environment:          environment,
-		SensitiveEnvironment: sensitiveEnvironment,
-		ShellScript:          shellScript,
-	}
-	return config.Client()
+type client struct {
 }
 
-// This is a global MutexKV for use within this plugin.
-var shellMutexKV = mutexkv.NewMutexKV()
+func configure(p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+		var diags diag.Diagnostics
+		// var environment map[string]interface{}
+		// if v, ok := d.GetOk("environment"); ok {
+		// 	environment = v.(map[string]interface{})
+		// }
+		// var sensitiveEnvironment map[string]interface{}
+		// if v, ok := d.GetOk("sensitive_environment"); ok {
+		// 	sensitiveEnvironment = v.(map[string]interface{})
+		// }
+		// shellScript := d.Get("shell_script").(string)
 
-const shellScriptMutexKey = "shellScriptMutexKey"
+		log.Println("[INFO] Hello World")
+
+		// config := Config{
+		// 	Environment:          environment,
+		// 	SensitiveEnvironment: sensitiveEnvironment,
+		// 	ShellScript:          shellScript,
+		// }
+
+		return &client{}, diags
+	}
+}
