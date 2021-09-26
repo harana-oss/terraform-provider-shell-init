@@ -1,8 +1,8 @@
 Terraform Provider Shell Init
 ==========================================================
-https://registry.terraform.io/providers/harana/shell-init
+https://registry.terraform.io/providers/harana-oss/shell-init
 
-This provider executes a shell script when it is initialised.
+This provider executes a sequence of shell scripts when it is initialised.
 
 Requirements
 ------------
@@ -36,39 +36,22 @@ go mod tidy
 Then commit the changes to `go.mod` and `go.sum`.
 
 
-Using the provider
+Using the Provider
 ----------------------
+
+Set the following environment variable: TF_INIT_FILES to a list of script files e.g. TF_INIT_FILES="script1.sh, script2.sh".
+
+Then configure the provider as follows
 
 ```
 terraform {
   required_providers {
     shell = {
-      source = "harana/shell-init"
-      version = "0.0.1"
+      source = "harana-oss/shell-init"
+      version = "1.0"
     }
   }
 }
 
-provider "shell" {
-  shell_script = "${path.root}/init.sh" 
-
-  sensitive_environment = {
-    OAUTH_TOKEN = var.oauth_token
-  }
-}
-```
-
-Developing the Provider
----------------------------
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
-
-To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
-
-In order to run the full suite of Acceptance tests, run `make testacc`.
-
-*Note:* Acceptance tests create real resources, and often cost money to run.
-
-```sh
-$ make testacc
+provider "shell" {}
 ```
