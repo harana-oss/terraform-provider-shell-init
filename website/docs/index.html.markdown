@@ -8,23 +8,23 @@ description: |-
 
 # Shell Init Provider
 
-This provider executes a shell script when it is initialised.
+This provider executes a sequence of shell scripts when it is initialised.
 
 ## Example Usage
 
-```hcl
-provider "shell" {
-  shell_script = "${path.root}/init.sh" 
+Set the following environment variable: TF_INIT_SCRIPTS to a list of script files e.g. TF_INIT_SCRIPTS="script1.sh, script2.sh".
 
-  sensitive_environment = {
-    OAUTH_TOKEN = var.oauth_token
+Then configure the provider as follows:
+
+```hcl
+terraform {
+  required_providers {
+    shell = {
+      source = "harana-oss/shell-init"
+      version = "1.0.1"
+    }
   }
 }
-```
 
-Stdout and stderr stream to log files. You can get this by setting:
-
+provider "shell" {}
 ```
-export TF_LOG=1
-```
-**Note:** if you are using sensitive_environment to set sensitive environment variables, these values won't show up in the logs

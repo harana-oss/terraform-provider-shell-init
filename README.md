@@ -39,7 +39,7 @@ Then commit the changes to `go.mod` and `go.sum`.
 Using the Provider
 ----------------------
 
-Set the following environment variable: TF_INIT_FILES to a list of script files e.g. TF_INIT_FILES="script1.sh, script2.sh".
+Set the following environment variable: TF_INIT_SCRIPTS to a list of script files e.g. TF_INIT_SCRIPTS="script1.sh, script2.sh".
 
 Then configure the provider as follows
 

@@ -19,9 +19,9 @@ func Provider() func() *schema.Provider {
 		}
 		log.Printf("[INFO] Current directory is: %s", dir)
 
-		paths := os.Getenv("TF_INIT_FILES")
+		paths := os.Getenv("TF_INIT_SCRIPTS")
 		if paths == "" {
-			log.Printf("[ERROR] Need to provide TF_INIT_FILES.")
+			log.Printf("[ERROR] Need to provide TF_INIT_SCRIPTS.")
 		}
 
 		for _, token := range strings.Split(paths, ",") {
