@@ -73,6 +73,13 @@ func Provider() func() *schema.Provider {
 			Schema:         map[string]*schema.Schema{},
 			DataSourcesMap: map[string]*schema.Resource{},
 			ResourcesMap:   map[string]*schema.Resource{},
+			ConfigureFunc:  providerConfigure,
 		}
 	}
+}
+
+func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	log.Printf("[INFO] Adding temp state")
+	d.Set("temp", "temp")
+	return nil, nil
 }
